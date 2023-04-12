@@ -1,8 +1,8 @@
 formatter: markdown table
 
-recursive:
-  enabled: true
-  path: modules
+# recursive:
+#   enabled: true
+#   path: modules
 
 settings:
   anchor: false
