@@ -93,17 +93,46 @@ variable "wait_for_success_timeout_seconds" {
   default     = 3600
 }
 
-variable "schedule_expression" {
+variable "scan_schedule_expression" {
   type        = string
   description = "Schedule expression"
   default     = "cron(15 23 ? * * *)"
 }
 
+variable "install_schedule_expression" {
+  type        = string
+  description = "Schedule expression"
+  default     = "cron(0 0 ? * THU#2 *)"
+}
+
 variable "output_location" {
   type = list(object({
     output_s3_bucket_name = string
-    output_s3_key_prefix  = string
   }))
   description = "Output location"
   default     = []
+}
+
+variable "maint_window_duration" {
+  type        = number
+  description = "Maintenance window duration in hours"
+  default     = 6
+}
+
+variable "maint_window_cutoff" {
+  type        = number
+  description = "Maintenance window cutoff in hours"
+  default     = 1
+}
+
+variable "allow_unassociated_targets" {
+  type        = bool
+  description = "Allow unassociated targets"
+  default     = true
+}
+
+variable "schedule_timezone" {
+  type        = string
+  description = "Schedule timezone"
+  default     = "GB"
 }
