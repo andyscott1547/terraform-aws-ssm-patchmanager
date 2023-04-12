@@ -11,8 +11,8 @@ variable "os" {
   description = "Operating system"
   default     = "REDHAT_ENTERPRISE_LINUX"
   validation {
-    condition     = contains(["REDHAT_ENTERPRISE_LINUX", "CENTOS", "WINDOWS"], var.os)
-    error_message = "Invalid OS Type, options: \"REDHAT_ENTERPRISE_LINUX\", \"CENTOS\", \"WINDOWS\"."
+    condition     = contains(["REDHAT_ENTERPRISE_LINUX", "CENTOS", "AMAZON_LINUX", "AMAZON_LINUX_2", "AMAZON_LINUX_2022", "WINDOWS"], var.os)
+    error_message = "Invalid OS Type, options: \"REDHAT_ENTERPRISE_LINUX\", \"CENTOS\", \"AMAZON_LINUX\", \"AMAZON_LINUX_2\", \"AMAZON_LINUX_2022\", \"WINDOWS\"."
   }
 }
 

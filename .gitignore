@@ -43,3 +43,6 @@ keys/
 
 # vscode
 .vscode
+
+# intellij and pycharm
+.idea
