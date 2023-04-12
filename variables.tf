@@ -37,7 +37,7 @@ variable "approve_after_days" {
 variable "compliance_level" {
   type        = string
   description = "Compliance level"
-  default     = "CRITICAL"
+  default     = "MEDIUM"
   validation {
     condition     = contains(["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFORMATIONAL", "UNSPECIFIED"], var.compliance_level)
     error_message = "Invalid compliance level, options: \"CRITICAL\", \"HIGH\", \"MEDIUM\", \"LOW\", \"INFORMATIONAL\", \"UNSPECIFIED\"."
