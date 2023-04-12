@@ -28,22 +28,6 @@ variable "approved_patches" {
   default     = null
 }
 
-variable "approve_after_days" {
-  type        = number
-  description = "Number of days to approve patches after"
-  default     = 7
-}
-
-variable "compliance_level" {
-  type        = string
-  description = "Compliance level"
-  default     = "MEDIUM"
-  validation {
-    condition     = contains(["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFORMATIONAL", "UNSPECIFIED"], var.compliance_level)
-    error_message = "Invalid compliance level, options: \"CRITICAL\", \"HIGH\", \"MEDIUM\", \"LOW\", \"INFORMATIONAL\", \"UNSPECIFIED\"."
-  }
-}
-
 variable "enable_non_security" {
   type        = bool
   description = "Enable non-security patches"
