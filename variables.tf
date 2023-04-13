@@ -68,7 +68,7 @@ variable "approval_rules" {
 variable "is_default" {
   type        = bool
   description = "Set as default patch baseline"
-  default     = true
+  default     = false
 }
 
 variable "wait_for_success_timeout_seconds" {
