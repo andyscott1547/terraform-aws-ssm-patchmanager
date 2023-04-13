@@ -128,5 +128,5 @@ variable "repo_source" {
     products      = string
   }))
   description = "Yum Repo source"
-  default = []
+  default     = []
 }

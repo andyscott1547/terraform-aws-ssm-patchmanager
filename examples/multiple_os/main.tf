@@ -2,7 +2,8 @@
 
 module "amazon_linux_2" {
   for_each   = toset(var.os_list)
-  source     = "github.com/andyscott1547/terraform-aws-ssm-patchmanager"
+  source     = "andyscott1547/ssm-patchmanager/aws"
+  version    = "0.1.0"
   os         = each.value
   is_default = true
 }

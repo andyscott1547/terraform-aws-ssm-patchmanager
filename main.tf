@@ -37,7 +37,7 @@ resource "aws_ssm_patch_baseline" "this" {
       configuration = source.value.configuration
       products      = source.value.products
     }
-  }  
+  }
 }
 
 resource "aws_ssm_default_patch_baseline" "this" {

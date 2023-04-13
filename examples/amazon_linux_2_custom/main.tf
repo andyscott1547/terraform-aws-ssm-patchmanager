@@ -1,7 +1,8 @@
 # example/main
 
 module "amazon_linux_2" {
-  source     = "github.com/andyscott1547/terraform-aws-ssm-patchmanager"
+  source     = "andyscott1547/ssm-patchmanager/aws"
+  version    = "0.1.0"
   os         = "AMAZON_LINUX_2"
   is_default = false
   approval_rules = [
