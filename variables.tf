@@ -11,8 +11,8 @@ variable "os" {
   description = "Operating system"
   default     = "REDHAT_ENTERPRISE_LINUX"
   validation {
-    condition     = contains(["REDHAT_ENTERPRISE_LINUX", "CENTOS", "AMAZON_LINUX", "AMAZON_LINUX_2", "AMAZON_LINUX_2022", "WINDOWS"], var.os)
-    error_message = "Invalid OS Type, options: \"REDHAT_ENTERPRISE_LINUX\", \"CENTOS\", \"AMAZON_LINUX\", \"AMAZON_LINUX_2\", \"AMAZON_LINUX_2022\", \"WINDOWS\"."
+    condition     = contains(["REDHAT_ENTERPRISE_LINUX", "CENTOS", "AMAZON_LINUX", "AMAZON_LINUX_2", "AMAZON_LINUX_2022", "WINDOWS", "ORACLE_LINUX", "MACOS", "DEBIAN", "UBUNTU"], var.os)
+    error_message = "Invalid OS Type, options: \"REDHAT_ENTERPRISE_LINUX\", \"CENTOS\", \"AMAZON_LINUX\", \"AMAZON_LINUX_2\", \"ORACLE_LINUX\", \"AMAZON_LINUX_2022\", \"WINDOWS\", \"MACOS\", \"DEBIAN\", \"UBUNTU\"."
   }
 }
 
@@ -59,7 +59,7 @@ variable "approval_rules" {
       compliance_level    = "HIGH",
       enable_non_security = true,
       patch_filters = [{
-        key    = "CLASSIFICATION",
+        key    = "PRODUCT",
         values = ["*"]
     }] }
   ]
