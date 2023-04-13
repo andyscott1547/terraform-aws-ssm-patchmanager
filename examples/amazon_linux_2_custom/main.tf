@@ -5,7 +5,7 @@ module "amazon_linux_2" {
   os         = "AMAZON_LINUX_2"
   is_default = false
   approval_rules = [
-    { 
+    {
       approve_after_days  = 14,
       compliance_level    = "MEDIUM",
       enable_non_security = true,
@@ -18,9 +18,9 @@ module "amazon_linux_2" {
           key    = "SEVERITY",
           values = ["*"]
         }
-      ] 
+      ]
     },
-    { 
+    {
       approve_after_days  = 7,
       compliance_level    = "CRITICAL",
       enable_non_security = true,
@@ -33,7 +33,7 @@ module "amazon_linux_2" {
           key    = "SEVERITY",
           values = ["*"]
         }
-      ] 
+      ]
     }
   ]
 
