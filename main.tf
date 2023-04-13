@@ -30,6 +30,14 @@ resource "aws_ssm_patch_baseline" "this" {
       }
     }
   }
+  dynamic "source" {
+    for_each = var.source
+    content {
+      name          = source.value.name
+      configuration = source.value.configuration
+      products      = source.value.products
+    }
+  }  
 }
 
 resource "aws_ssm_default_patch_baseline" "this" {

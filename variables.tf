@@ -120,3 +120,13 @@ variable "schedule_timezone" {
   description = "Schedule timezone"
   default     = "GB"
 }
+
+variable "source" {
+  type = list(object({
+    name          = string
+    configuration = string
+    products      = string
+  }))
+  description = "Yum Repo source"
+  default = []
+}
