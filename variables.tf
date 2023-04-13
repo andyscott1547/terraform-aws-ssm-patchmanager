@@ -121,7 +121,7 @@ variable "schedule_timezone" {
   default     = "GB"
 }
 
-variable "source" {
+variable "repo_source" {
   type = list(object({
     name          = string
     configuration = string

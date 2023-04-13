@@ -31,7 +31,7 @@ resource "aws_ssm_patch_baseline" "this" {
     }
   }
   dynamic "source" {
-    for_each = var.source
+    for_each = var.repo_source
     content {
       name          = source.value.name
       configuration = source.value.configuration
