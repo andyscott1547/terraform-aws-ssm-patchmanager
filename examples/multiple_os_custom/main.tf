@@ -1,12 +1,12 @@
 # example/main
 
 module "standard_patch_baselines" {
-  for_each       = var.standard_os_baselines
-  source         = "andyscott1547/ssm-patchmanager/aws"
-  version        = "1.2.0"
-  os             = each.key
-  is_default     = each.value.is_default
-  approval_rules = each.value.approval_rules
+  for_each                  = var.standard_os_baselines
+  source                    = "andyscott1547/ssm-patchmanager/aws"
+  version                   = "1.2.0"
+  os                        = each.key
+  is_default                = each.value.is_default
+  approval_rules            = each.value.approval_rules
   enable_association        = false
   enable_maintenance_window = false
 }
@@ -48,13 +48,8 @@ resource "aws_ssm_association" "default" {
 }
 
 module "ssm_maintenance_window" {
-  for_each = { for item in setproduct(var.patch_windows.days, var.patch_windows.periods): 
-    lower("${item[0]}_${item[1]}") => {
-      patch_day    = item[0]
-      patch_window = item[1]
-    }
-  }
-  source = "./modules/ssm_maintenance_window"
-  patch_day = each.value.patch_day
-  patch_window = each.value.patch_window
+  for_each     = local.patch_windows
+  source       = "./modules/ssm_maintenance_window"
+  patch_day    = each.value.day
+  patch_window = each.value.period
 }

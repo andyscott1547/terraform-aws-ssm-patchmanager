@@ -7,4 +7,5 @@ locals {
   }
 
   selected = local.patch_times[var.patch_window]
+
 }

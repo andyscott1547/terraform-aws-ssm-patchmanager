@@ -2,10 +2,10 @@
 
 locals {
   ssm_association = ["Scan", "Install"]
-  # results = { for pair in setproduct(var.days, var.windows) : pair[0] => pair[1]...}
-
-  # result = setproduct(var.days, var.windows)
-  # test = [
-  #   for item in local.result : merge({day = item[0]}, {window = item[1]})
-  # ]
+  patch_windows = { for window in setproduct(var.patch_windows["days"], var.patch_windows["periods"]) :
+    lower("${window[0]}_${window[1]}") => {
+      day    = window[0]
+      period = window[1]
+    }
+  }
 }

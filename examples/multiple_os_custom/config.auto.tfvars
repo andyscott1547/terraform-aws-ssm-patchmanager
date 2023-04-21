@@ -268,6 +268,6 @@ critical_os_baselines = {
   }
 }
 patch_windows = {
-  days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+  days    = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
   periods = ["Morning", "Afternoon", "Evening", "Night"]
 }

@@ -25,7 +25,7 @@ variable "schedule_timezone" {
 }
 
 variable "output_location" {
-  type = string
+  type        = string
   description = "Output location"
   default     = null
 }
