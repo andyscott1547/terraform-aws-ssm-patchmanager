@@ -1,7 +1,7 @@
 # main
 
 resource "aws_ssm_patch_baseline" "this" {
-  name             = lower("${var.os}_patch_baseline")
+  name             = lower("${var.name_prefix}_${var.os}_patch_baseline")
   description      = "Patch baseline for ${var.env} ${var.os} instances"
   operating_system = upper(var.os)
   rejected_patches = var.rejected_patches
@@ -16,7 +16,7 @@ resource "aws_ssm_patch_baseline" "this" {
   }
 
   dynamic "approval_rule" {
-    for_each = var.approval_rules
+    for_each = var.approved_patches != null ? [] : var.approval_rules
     content {
       approve_after_days  = approval_rule.value.approve_after_days
       compliance_level    = approval_rule.value.compliance_level
@@ -67,7 +67,7 @@ resource "aws_ssm_association" "this" {
   }
 
   parameters = {
-    Operation = each.value
+    Operation    = each.value
     RebootOption = each.value == "Install" ? "RebootIfNeeded" : null
   }
 
@@ -78,7 +78,7 @@ resource "aws_ssm_association" "this" {
 }
 
 resource "aws_ssm_maintenance_window" "this" {
-  count = var.enable_maintenance_window ? 1 : 0
+  count                      = var.enable_maintenance_window ? 1 : 0
   name                       = lower("${var.os}_patch_baseline_install")
   schedule                   = var.install_schedule_expression
   duration                   = var.maint_window_duration
@@ -88,7 +88,7 @@ resource "aws_ssm_maintenance_window" "this" {
 }
 
 resource "aws_ssm_maintenance_window_target" "this" {
-  count = var.enable_maintenance_window ? 1 : 0
+  count         = var.enable_maintenance_window ? 1 : 0
   name          = lower("${var.os}_patch_baseline_install")
   window_id     = aws_ssm_maintenance_window.this[0].id
   resource_type = "INSTANCE"
@@ -99,7 +99,7 @@ resource "aws_ssm_maintenance_window_target" "this" {
 }
 
 resource "aws_ssm_maintenance_window_task" "this" {
-  count = var.enable_maintenance_window ? 1 : 0
+  count           = var.enable_maintenance_window ? 1 : 0
   name            = lower("${var.os}_patch_baseline_install")
   window_id       = aws_ssm_maintenance_window.this[0].id
   task_type       = "RUN_COMMAND"

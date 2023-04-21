@@ -12,7 +12,12 @@ variable "tags" {
   default     = {}
 }
 
-variable "operating_systems" {
+variable "standard_os_baselines" {
   type        = map(any)
   description = "configuration for patch baseline for each operating system"
+}
+
+variable "critical_os_baselines" {
+  type        = map(any)
+  description = "configuration for patch baseline for each operating system for urgent patch operations"
 }

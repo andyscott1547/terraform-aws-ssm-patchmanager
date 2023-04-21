@@ -142,3 +142,8 @@ variable "enable_maintenance_window" {
   description = "Enable default maintenance window per OS type"
   default     = true
 }
+variable "name_prefix" {
+  type        = string
+  description = "Patch Baseline Name prefix"
+  default     = "standard"
+}
