@@ -48,8 +48,13 @@ resource "aws_ssm_association" "default" {
 }
 
 module "ssm_maintenance_window" {
-  count = length(local.test)
+  for_each = { for item in setproduct(var.patch_windows.days, var.patch_windows.periods): 
+    lower("${item[0]}_${item[1]}") => {
+      patch_day    = item[0]
+      patch_window = item[1]
+    }
+  }
   source = "./modules/ssm_maintenance_window"
-  patch_day = local.test[count.index].day
-  patch_window = local.test[count.index].window
+  patch_day = each.value.patch_day
+  patch_window = each.value.patch_window
 }

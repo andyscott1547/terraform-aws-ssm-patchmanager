@@ -267,25 +267,7 @@ critical_os_baselines = {
     ]
   }
 }
-
-days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
-windows = ["Morning", "Afternoon", "Evening", "Night"]
-
-maintenance_windows = {
-  sun_morning = {
-    patch_day = "SUN"
-    patch_window = "Morning"
-  }
-  sun_afternoon = {
-    patch_day = "SUN"
-    patch_window = "Afternoon"
-  }
-  sun_evening = {
-    patch_day = "SUN"
-    patch_window = "Evening"
-  }
-  sun_night = {
-    patch_day = "SUN"
-    patch_window = "Night"
-  }
+patch_windows = {
+  days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+  periods = ["Morning", "Afternoon", "Evening", "Night"]
 }

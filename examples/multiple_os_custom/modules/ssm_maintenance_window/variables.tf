@@ -41,4 +41,4 @@ variable "patch_window" {
   description = "Patch window for time of day"
   default     = null
 }
-  
+

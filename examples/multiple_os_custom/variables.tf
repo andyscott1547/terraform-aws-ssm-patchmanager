@@ -42,18 +42,28 @@ variable "scan_schedule_expression" {
   default     = "cron(15 23 ? * * *)"
 }
 
-variable "maintenance_windows" {
-  type        = map(any)
-  description = "Maintenance windows"
-}
+# variable "maintenance_windows" {
+#   type        = map(any)
+#   description = "Maintenance windows"
+# }
 
-variable "days" {
-  type        = list(string)
-  description = "Days of week"
-  default     = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
-}
+# variable "days" {
+#   type        = list(string)
+#   description = "Days of week"
+#   default     = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+# }
 
-variable "windows" {
-  type = list(string)
-  description = "Windows of day"
+# variable "windows" {
+#   type = list(string)
+#   description = "Windows of day"
+# }
+
+variable "patch_windows" {
+  type = object({
+    days    = set(string)
+    periods = set(string)
+  })
+
+  description = "foo"
+  default     = null
 }
