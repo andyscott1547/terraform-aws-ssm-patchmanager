@@ -1,5 +1,10 @@
 locals {
-  patch_window = var.patch_window == "Morning" ? 05 : local.not_morning
-  not_morning =  var.patch_window == "Afternoon" ? 13 : local.not_afternoon
-  not_afternoon = var.patch_window == "Evening" ? 20 : 02
+  patch_times = {
+    Morning   = 05
+    Afternoon = 13
+    Evening   = 20
+    Night     = 02
+  }
+
+  selected = local.patch_times[var.patch_window]
 }

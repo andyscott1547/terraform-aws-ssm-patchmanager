@@ -2,7 +2,7 @@
 
 resource "aws_ssm_maintenance_window" "this" {
   name                       = lower("patch_baseline_install_${var.patch_day}_${var.patch_window}")
-  schedule                   = "cron(${local.patch_window} 0 ? * ${var.patch_day} *)"
+  schedule                   = "cron(${local.selected} 0 ? * ${var.patch_day} *)"
   duration                   = var.maint_window_duration
   cutoff                     = var.maint_window_cutoff
   allow_unassociated_targets = var.allow_unassociated_targets
