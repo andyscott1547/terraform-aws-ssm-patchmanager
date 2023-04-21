@@ -1,7 +1,7 @@
 # main
 
 resource "aws_ssm_patch_baseline" "this" {
-  name             = lower("${var.env}_${var.os}_patch_baseline")
+  name             = lower("${var.os}_patch_baseline")
   description      = "Patch baseline for ${var.env} ${var.os} instances"
   operating_system = upper(var.os)
   rejected_patches = var.rejected_patches
@@ -53,9 +53,9 @@ resource "aws_ssm_patch_group" "this" {
 }
 
 resource "aws_ssm_association" "this" {
-  for_each                         = toset(local.ssm_association)
+  for_each                         = var.enable_association ? toset(local.ssm_association) : []
   name                             = "AWS-RunPatchBaseline"
-  association_name                 = lower("${var.env}_${var.os}_patch_baseline_${each.value}")
+  association_name                 = lower("${var.os}_patch_baseline_${each.value}")
   wait_for_success_timeout_seconds = var.wait_for_success_timeout_seconds
   schedule_expression              = each.value == "Scan" ? var.scan_schedule_expression : null
   dynamic "output_location" {
@@ -68,6 +68,7 @@ resource "aws_ssm_association" "this" {
 
   parameters = {
     Operation = each.value
+    each.value == "Install" ? "RebootOption" : null : "RebootIfNeeded"
   }
 
   targets {
@@ -77,7 +78,8 @@ resource "aws_ssm_association" "this" {
 }
 
 resource "aws_ssm_maintenance_window" "this" {
-  name                       = lower("${var.env}_${var.os}_patch_baseline_install")
+  count = var.enable_maintenance_window ? 1 : 0
+  name                       = lower("${var.os}_patch_baseline_install")
   schedule                   = var.install_schedule_expression
   duration                   = var.maint_window_duration
   cutoff                     = var.maint_window_cutoff
@@ -86,7 +88,8 @@ resource "aws_ssm_maintenance_window" "this" {
 }
 
 resource "aws_ssm_maintenance_window_target" "this" {
-  name          = lower("${var.env}_${var.os}_patch_baseline_install")
+  count = var.enable_maintenance_window ? 1 : 0
+  name          = lower("${var.os}_patch_baseline_install")
   window_id     = aws_ssm_maintenance_window.this.id
   resource_type = "INSTANCE"
   targets {
@@ -96,7 +99,8 @@ resource "aws_ssm_maintenance_window_target" "this" {
 }
 
 resource "aws_ssm_maintenance_window_task" "this" {
-  name            = lower("${var.env}_${var.os}_patch_baseline_install")
+  count = var.enable_maintenance_window ? 1 : 0
+  name            = lower("${var.os}_patch_baseline_install")
   window_id       = aws_ssm_maintenance_window.this.id
   task_type       = "RUN_COMMAND"
   priority        = 1

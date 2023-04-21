@@ -130,3 +130,15 @@ variable "repo_source" {
   description = "Yum Repo source"
   default     = []
 }
+
+variable "enable_association" {
+  type        = bool
+  description = "Enable default SSM association per OS type"
+  default     = true
+}
+
+variable "enable_maintenance_window" {
+  type        = bool
+  description = "Enable default maintenance window per OS type"
+  default     = true
+}
