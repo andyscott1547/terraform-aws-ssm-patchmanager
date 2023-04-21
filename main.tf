@@ -122,6 +122,6 @@ resource "aws_ssm_maintenance_window_task" "this" {
   }
   targets {
     key    = "WindowTargetIds"
-    values = [aws_ssm_maintenance_window_target.this.id]
+    values = [aws_ssm_maintenance_window_target.this[0].id]
   }
 }
