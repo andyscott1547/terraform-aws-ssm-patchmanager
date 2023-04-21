@@ -22,12 +22,6 @@ variable "critical_os_baselines" {
   description = "configuration for patch baseline for each operating system for urgent patch operations"
 }
 
-variable "wait_for_success_timeout_seconds" {
-  type        = number
-  description = "Wait for success timeout in seconds"
-  default     = 3600
-}
-
 variable "output_location" {
   type = list(object({
     output_s3_bucket_name = string

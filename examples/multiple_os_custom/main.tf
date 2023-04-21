@@ -23,12 +23,12 @@ module "critical_patch_baselines" {
 }
 
 resource "aws_ssm_association" "default" {
-  for_each                         = toset(local.ssm_association)
-  name                             = "AWS-RunPatchBaseline"
-  association_name                 = lower("all_os_patch_baseline_${each.value}")
-  wait_for_success_timeout_seconds = var.wait_for_success_timeout_seconds
-  schedule_expression              = each.value == "Scan" ? var.scan_schedule_expression : null
-  apply_only_at_cron_interval      = true
+  for_each         = toset(local.ssm_association)
+  name             = "AWS-RunPatchBaseline"
+  association_name = lower("all_os_patch_baseline_${each.value}")
+  # wait_for_success_timeout_seconds = var.wait_for_success_timeout_seconds
+  schedule_expression         = each.value == "Scan" ? var.scan_schedule_expression : null
+  apply_only_at_cron_interval = each.value == "Scan" ? true : null
 
   dynamic "output_location" {
     for_each = var.output_location
@@ -44,8 +44,8 @@ resource "aws_ssm_association" "default" {
   }
 
   targets {
-    key    = "tag:PatchGroup"
-    values = ["AMAZON_LINUX_2", "REDHAT_ENTERPRISE_LINUX", "WINDOWS"]
+    key    = "InstanceIds"
+    values = ["*"]
   }
 }
 

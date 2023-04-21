@@ -71,12 +71,6 @@ variable "is_default" {
   default     = false
 }
 
-variable "wait_for_success_timeout_seconds" {
-  type        = number
-  description = "Wait for success timeout in seconds"
-  default     = 3600
-}
-
 variable "scan_schedule_expression" {
   type        = string
   description = "Schedule expression"
