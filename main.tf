@@ -58,6 +58,7 @@ resource "aws_ssm_association" "this" {
   association_name                 = lower("${var.os}_patch_baseline_${each.value}")
   wait_for_success_timeout_seconds = var.wait_for_success_timeout_seconds
   schedule_expression              = each.value == "Scan" ? var.scan_schedule_expression : null
+  apply_only_at_cron_interval      = true
   dynamic "output_location" {
     for_each = var.output_location
     content {
