@@ -18,7 +18,6 @@ module "critical_patch_baselines" {
   os                        = each.key
   approval_rules            = each.value.approval_rules
   name_prefix               = "critical"
-  patch_group_name          = "CRITICAL_${each.key}"
   enable_association        = false
   enable_maintenance_window = false
 }
