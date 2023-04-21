@@ -3,7 +3,7 @@
 module "standard_patch_baselines" {
   for_each       = var.standard_os_baselines
   source         = "andyscott1547/ssm-patchmanager/aws"
-  version        = "1.1.4"
+  version        = "1.1.5"
   os             = each.key
   is_default     = each.value.is_default
   approval_rules = each.value.approval_rules
@@ -14,10 +14,11 @@ module "standard_patch_baselines" {
 module "critical_patch_baselines" {
   for_each                  = var.critical_os_baselines
   source                    = "andyscott1547/ssm-patchmanager/aws"
-  version                   = "1.1.4"
+  version                   = "1.1.5"
   os                        = each.key
   approval_rules            = each.value.approval_rules
   name_prefix               = "critical"
+  patch_group_name          = "CRITICAL_${each.key}"
   enable_association        = false
   enable_maintenance_window = false
 }
@@ -47,9 +48,9 @@ resource "aws_ssm_association" "default" {
   }
 }
 
-# module "ssm_maintenance_window" {
-#   for_each = tomap(local.result[*])
-#   source = "./modules/ssm_maintenance_window"
-#   patch_day = each.value[0]
-#   patch_window = each.value[1]
-# }
+module "ssm_maintenance_window" {
+  count = length(local.test)
+  source = "./modules/ssm_maintenance_window"
+  patch_day = local.test[count.index].day
+  patch_window = local.test[count.index].window
+}

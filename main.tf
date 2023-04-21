@@ -49,7 +49,7 @@ resource "aws_ssm_default_patch_baseline" "this" {
 resource "aws_ssm_patch_group" "this" {
   count       = var.is_default ? 0 : 1
   baseline_id = aws_ssm_patch_baseline.this.id
-  patch_group = var.os
+  patch_group = var.patch_group_name == null ? var.os : var.patch_group_name
 }
 
 resource "aws_ssm_association" "this" {

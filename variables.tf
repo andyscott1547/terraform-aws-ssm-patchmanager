@@ -147,3 +147,9 @@ variable "name_prefix" {
   description = "Patch Baseline Name prefix"
   default     = "standard"
 }
+
+variable "patch_group_name" {
+  type        = string
+  description = "Patch Group Name"
+  default     = null
+}
