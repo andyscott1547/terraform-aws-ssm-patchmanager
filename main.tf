@@ -90,7 +90,7 @@ resource "aws_ssm_maintenance_window" "this" {
 resource "aws_ssm_maintenance_window_target" "this" {
   count = var.enable_maintenance_window ? 1 : 0
   name          = lower("${var.os}_patch_baseline_install")
-  window_id     = aws_ssm_maintenance_window.this.id
+  window_id     = aws_ssm_maintenance_window.this[0].id
   resource_type = "INSTANCE"
   targets {
     key    = "tag:PatchGroup"
@@ -101,7 +101,7 @@ resource "aws_ssm_maintenance_window_target" "this" {
 resource "aws_ssm_maintenance_window_task" "this" {
   count = var.enable_maintenance_window ? 1 : 0
   name            = lower("${var.os}_patch_baseline_install")
-  window_id       = aws_ssm_maintenance_window.this.id
+  window_id       = aws_ssm_maintenance_window.this[0].id
   task_type       = "RUN_COMMAND"
   priority        = 1
   max_concurrency = 5
