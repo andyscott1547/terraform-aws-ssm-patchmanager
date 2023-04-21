@@ -68,7 +68,7 @@ resource "aws_ssm_association" "this" {
 
   parameters = {
     Operation = each.value
-    each.value == "Install" ? "RebootOption" : null : "RebootIfNeeded"
+    RebootOption = each.value == "Install" ? "RebootIfNeeded" : null
   }
 
   targets {
