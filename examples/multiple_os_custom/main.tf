@@ -3,7 +3,7 @@
 module "standard_patch_baselines" {
   for_each                  = var.standard_os_baselines
   source                    = "andyscott1547/ssm-patchmanager/aws"
-  version                   = "1.3.0"
+  version                   = "1.3.1"
   os                        = each.key
   is_default                = each.value.is_default
   approval_rules            = each.value.approval_rules
@@ -14,12 +14,13 @@ module "standard_patch_baselines" {
 module "critical_patch_baselines" {
   for_each                  = var.critical_os_baselines
   source                    = "andyscott1547/ssm-patchmanager/aws"
-  version                   = "1.3.0"
+  version                   = "1.3.1"
   os                        = each.key
   approval_rules            = each.value.approval_rules
   name_prefix               = "critical"
   enable_association        = true
   ssm_association           = ["Install"]
+  critical                  = true
   enable_maintenance_window = false
 }
 

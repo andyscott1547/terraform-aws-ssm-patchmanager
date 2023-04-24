@@ -153,3 +153,9 @@ variable "ssm_association" {
   description = "SSM Association"
   default     = ["Scan", "Install"]
 }
+
+variable "critical" {
+  type        = bool
+  description = "Critical patch baseline association for out of band patching"
+  default     = false
+}

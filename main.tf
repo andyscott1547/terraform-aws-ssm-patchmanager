@@ -73,7 +73,7 @@ resource "aws_ssm_association" "this" {
 
   targets {
     key    = "tag:PatchGroup"
-    values = [var.os]
+    values = [var.critical ? "CRITICAL_${var.os}" : var.os]
   }
 }
 
