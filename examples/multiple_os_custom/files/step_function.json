@@ -1,0 +1,144 @@
+{
+    "Comment": "A description of my state machine",
+    "StartAt": "update_baseline",
+    "States": {
+      "update_baseline": {
+        "Type": "Task",
+        "Resource": "arn:aws:states:::lambda:invoke",
+        "Parameters": {
+          "Payload.$": "$",
+          "FunctionName": "arn:aws:lambda:eu-west-1:308231504633:function:test:$LATEST"
+        },
+        "Retry": [
+          {
+            "ErrorEquals": [
+              "Lambda.ServiceException",
+              "Lambda.AWSLambdaException",
+              "Lambda.SdkClientException",
+              "Lambda.TooManyRequestsException"
+            ],
+            "IntervalSeconds": 2,
+            "MaxAttempts": 6,
+            "BackoffRate": 2
+          }
+        ],
+        "Next": "Wait",
+        "ResultPath": "$.taskresult",
+        "Catch": [
+          {
+            "ErrorEquals": [
+              "States.ALL"
+            ],
+            "Next": "reset_baseline"
+          }
+        ]
+      },
+      "Wait": {
+        "Type": "Wait",
+        "Seconds": 900,
+        "Next": "apply_association"
+      },
+      "apply_association": {
+        "Type": "Task",
+        "Resource": "arn:aws:states:::lambda:invoke",
+        "Parameters": {
+          "Payload.$": "$",
+          "FunctionName": "arn:aws:lambda:eu-west-1:308231504633:function:test2:$LATEST"
+        },
+        "Retry": [
+          {
+            "ErrorEquals": [
+              "Lambda.ServiceException",
+              "Lambda.AWSLambdaException",
+              "Lambda.SdkClientException",
+              "Lambda.TooManyRequestsException"
+            ],
+            "IntervalSeconds": 2,
+            "MaxAttempts": 6,
+            "BackoffRate": 2
+          }
+        ],
+        "ResultPath": "$.taskresult",
+        "Next": "wait_for_association_execution",
+        "Catch": [
+          {
+            "ErrorEquals": [
+              "States.ALL"
+            ],
+            "Next": "reset_baseline"
+          }
+        ]
+      },
+      "wait_for_association_execution": {
+        "Type": "Wait",
+        "Next": "DescribeAssociationExecutions",
+        "Seconds": 60
+      },
+      "DescribeAssociationExecutions": {
+        "Type": "Task",
+        "Parameters": {
+          "AssociationId.$": "$.taskresult.Payload"
+        },
+        "Resource": "arn:aws:states:::aws-sdk:ssm:describeAssociationExecutions",
+        "Next": "Job Complete?",
+        "ResultPath": "$.taskresult",
+        "Catch": [
+          {
+            "ErrorEquals": [
+              "States.ALL"
+            ],
+            "Next": "reset_baseline"
+          }
+        ]
+      },
+      "Job Complete?": {
+        "Type": "Choice",
+        "Choices": [
+          {
+            "Variable": "$.taskresult.AssociationExecutions[0].DetailedStatus",
+            "StringEquals": "Failed",
+            "Next": "Job Failed"
+          },
+          {
+            "Variable": "$.taskresult.AssociationExecutions[0].DetailedStatus",
+            "StringEquals": "Success",
+            "Next": "Job Succeeded"
+          }
+        ],
+        "Default": "wait_for_association_execution"
+      },
+      "Job Succeeded": {
+        "Comment": "Placeholder for a state which handles the success.",
+        "Type": "Pass",
+        "Next": "reset_baseline"
+      },
+      "reset_baseline": {
+        "Type": "Task",
+        "Resource": "arn:aws:states:::lambda:invoke",
+        "OutputPath": "$.Payload",
+        "Parameters": {
+          "Payload.$": "$",
+          "FunctionName": "arn:aws:lambda:eu-west-1:308231504633:function:test3:$LATEST"
+        },
+        "Retry": [
+          {
+            "ErrorEquals": [
+              "Lambda.ServiceException",
+              "Lambda.AWSLambdaException",
+              "Lambda.SdkClientException",
+              "Lambda.TooManyRequestsException"
+            ],
+            "IntervalSeconds": 2,
+            "MaxAttempts": 6,
+            "BackoffRate": 2
+          }
+        ],
+        "End": true
+      },
+      "Job Failed": {
+        "Comment": "Placeholder for a state which handles the failure.",
+        "Type": "Pass",
+        "Next": "reset_baseline"
+      }
+    }
+  }
