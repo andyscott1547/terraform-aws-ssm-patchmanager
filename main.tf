@@ -53,7 +53,7 @@ resource "aws_ssm_patch_group" "this" {
 }
 
 resource "aws_ssm_association" "this" {
-  for_each                    = var.enable_association ? toset(local.ssm_association) : []
+  for_each                    = var.enable_association ? toset(var.ssm_association) : []
   name                        = "AWS-RunPatchBaseline"
   association_name            = lower("${var.os}_patch_baseline_${each.value}")
   schedule_expression         = each.value == "Scan" ? var.scan_schedule_expression : null

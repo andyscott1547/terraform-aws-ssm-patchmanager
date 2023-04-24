@@ -147,3 +147,9 @@ variable "patch_group_name" {
   description = "Patch Group Name"
   default     = null
 }
+
+variable "ssm_association" {
+  type        = list(string)
+  description = "SSM Association"
+  default     = ["Scan", "Install"]
+}
