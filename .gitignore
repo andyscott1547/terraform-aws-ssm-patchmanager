@@ -49,4 +49,4 @@ keys/
 # intellij and pycharm
 .idea
 
-**/*.zip
+# **/*.zip
