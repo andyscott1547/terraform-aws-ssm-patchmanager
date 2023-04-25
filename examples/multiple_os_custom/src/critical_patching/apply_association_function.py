@@ -39,13 +39,7 @@ def lambda_handler(event, context):
             ]
         )
 
-        time.sleep(5)
-
-        response = ssm_client.describe_association_executions(
-            AssociationId=association_id,
-        )
-
-        return response['AssociationExecutions'][0]['ExecutionId']
+        return association_id
 
     except Exception as e:
         logger.error(e)

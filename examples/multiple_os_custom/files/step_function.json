@@ -35,7 +35,7 @@
       },
       "Wait": {
         "Type": "Wait",
-        "Seconds": 30,
+        "Seconds": 900,
         "Next": "apply_association"
       },
       "apply_association": {
