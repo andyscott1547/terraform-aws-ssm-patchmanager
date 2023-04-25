@@ -7,7 +7,7 @@
         "Resource": "arn:aws:states:::lambda:invoke",
         "Parameters": {
           "Payload.$": "$",
-          "FunctionName": "arn:aws:lambda:eu-west-1:308231504633:function:test:$LATEST"
+          "FunctionName": "${update_baseline_lambda_arn}:$LATEST"
         },
         "Retry": [
           {
@@ -29,13 +29,13 @@
             "ErrorEquals": [
               "States.ALL"
             ],
-            "Next": "reset_baseline"
+            "Next": "revert_baseline"
           }
         ]
       },
       "Wait": {
         "Type": "Wait",
-        "Seconds": 900,
+        "Seconds": 30,
         "Next": "apply_association"
       },
       "apply_association": {
@@ -43,7 +43,7 @@
         "Resource": "arn:aws:states:::lambda:invoke",
         "Parameters": {
           "Payload.$": "$",
-          "FunctionName": "arn:aws:lambda:eu-west-1:308231504633:function:test2:$LATEST"
+          "FunctionName": "${apply_association_lambda_arn}:$LATEST"
         },
         "Retry": [
           {
@@ -65,7 +65,7 @@
             "ErrorEquals": [
               "States.ALL"
             ],
-            "Next": "reset_baseline"
+            "Next": "revert_baseline"
           }
         ]
       },
@@ -87,7 +87,7 @@
             "ErrorEquals": [
               "States.ALL"
             ],
-            "Next": "reset_baseline"
+            "Next": "revert_baseline"
           }
         ]
       },
@@ -110,15 +110,15 @@
       "Job Succeeded": {
         "Comment": "Placeholder for a state which handles the success.",
         "Type": "Pass",
-        "Next": "reset_baseline"
+        "Next": "revert_baseline"
       },
-      "reset_baseline": {
+      "revert_baseline": {
         "Type": "Task",
         "Resource": "arn:aws:states:::lambda:invoke",
         "OutputPath": "$.Payload",
         "Parameters": {
           "Payload.$": "$",
-          "FunctionName": "arn:aws:lambda:eu-west-1:308231504633:function:test3:$LATEST"
+          "FunctionName": "${revert_baseline_lambda_arn}:$LATEST"
         },
         "Retry": [
           {
@@ -138,7 +138,7 @@
       "Job Failed": {
         "Comment": "Placeholder for a state which handles the failure.",
         "Type": "Pass",
-        "Next": "reset_baseline"
+        "Next": "revert_baseline"
       }
     }
   }

@@ -48,6 +48,6 @@ variable "patch_windows" {
 
 variable "lambda_functions" {
   type = map(object({
-    timeout = optional (string, 3)
+    timeout = optional (string, 15)
   }))
 }

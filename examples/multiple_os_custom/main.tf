@@ -66,7 +66,7 @@ module "lambda" {
   s3_bucket           = module.lambda_s3.bucket_name
   handler             = "${each.key}.lambda_handler"
   timeout             = each.value.timeout
-  custom_policy       = data.aws_iam_policy_document.update_patch_baseline.json
+  custom_policy       = data.aws_iam_policy_document.lambda_critical_patching.json
   environment_variables = {
     LOGGING_LEVEL = "INFO"
   }
@@ -94,4 +94,28 @@ module "lambda_s3" {
   source      = "andyscott1547/compliant-s3-bucket/aws"
   version     = "1.0.0"
   bucket_name = "patchmanager-lambda"
+}
+
+resource "aws_sfn_state_machine" "critical_patching" {
+  name        = "critical-patching"
+  role_arn    = aws_iam_role.critical_patching.arn
+  definition  = data.template_file.step_function.rendered
+}
+
+resource "aws_iam_role" "critical_patching" {
+  name = "step-function-role"
+
+  assume_role_policy = data.aws_iam_policy_document.assumerole.json
+
+  tags = merge(
+    {
+      "Name" = "step-function-role",
+    },
+  )
+}
+
+resource "aws_iam_role_policy" "critical_patching" {
+  name   = "critical-patching-custom-policy"
+  role   = aws_iam_role.critical_patching.name
+  policy = data.aws_iam_policy_document.step_function_critical_patching.json
 }
