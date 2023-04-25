@@ -59,28 +59,35 @@ module "ssm_maintenance_window" {
 }
 
 module "lambda" {
+  for_each = var.lambda_functions
   source              = "./modules/lambda"
-  lambda_name         = "update-patch-baseline"
-  code_zip            = aws_s3_object.object.key
+  lambda_name         = each.key
+  code_zip            = aws_s3_object.object[each.key].key
   s3_bucket           = module.lambda_s3.bucket_name
-  timeout             = 25
+  handler             = "${each.key}.lambda_handler"
+  timeout             = each.value.timeout
   custom_policy       = data.aws_iam_policy_document.update_patch_baseline.json
   environment_variables = {
     LOGGING_LEVEL = "INFO"
   }
+  depends_on = [
+    aws_s3_object.object
+  ] 
 }
 
 data "archive_file" "lambda" {
+  for_each    = var.lambda_functions
   type        = "zip"
-  source_file = "./src/critical_patching/update_baseline_function.py"
-  output_path = "./src/critical_patching/update_baseline_function.zip"
+  source_file = "./src/critical_patching/${each.key}.py"
+  output_path = "./src/critical_patching/${each.key}.zip"
 }
 
 resource "aws_s3_object" "object" {
+  for_each = var.lambda_functions
   bucket = module.lambda_s3.bucket_name
-  key    = "update_patch_baseline.zip"
-  source = data.archive_file.lambda.output_path
-  etag = filemd5(data.archive_file.lambda.output_path)
+  key    = "${each.key}.zip"
+  source = data.archive_file.lambda[each.key].output_path
+  etag = filemd5(data.archive_file.lambda[each.key].output_path)
 }
 
 module "lambda_s3" {

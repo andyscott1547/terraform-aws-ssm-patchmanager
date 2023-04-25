@@ -271,3 +271,11 @@ patch_windows = {
   days    = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
   periods = ["Morning", "Afternoon", "Evening", "Night"]
 }
+
+lambda_functions = {
+  "update_baseline_function" = {
+    timeout = 10
+  }
+  "revert_baseline_function" = {}
+  "apply_association_function" = {}
+}
