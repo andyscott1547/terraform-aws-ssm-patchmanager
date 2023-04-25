@@ -57,3 +57,34 @@ module "ssm_maintenance_window" {
   patch_day    = each.value.day
   patch_window = each.value.period
 }
+
+module "lambda" {
+  source              = "./modules/lambda"
+  lambda_name         = "update-patch-baseline"
+  code_zip            = aws_s3_object.object.key
+  s3_bucket           = module.lambda_s3.bucket_name
+  timeout             = 25
+  custom_policy       = data.aws_iam_policy_document.update_patch_baseline.json
+  environment_variables = {
+    LOGGING_LEVEL = "INFO"
+  }
+}
+
+data "archive_file" "lambda" {
+  type        = "zip"
+  source_file = "./src/critical_patching/update_baseline_function.py"
+  output_path = "./src/critical_patching/update_baseline_function.zip"
+}
+
+resource "aws_s3_object" "object" {
+  bucket = module.lambda_s3.bucket_name
+  key    = "update_patch_baseline.zip"
+  source = data.archive_file.lambda.output_path
+  etag = filemd5(data.archive_file.lambda.output_path)
+}
+
+module "lambda_s3" {
+  source      = "andyscott1547/compliant-s3-bucket/aws"
+  version     = "1.0.0"
+  bucket_name = "patchmanager-lambda"
+}

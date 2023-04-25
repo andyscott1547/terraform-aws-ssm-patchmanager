@@ -50,7 +50,7 @@ variable "custom_policy" {
   default     = ""
 }
 
-variable "environmnet_variables" {
+variable "environment_variables" {
   type        = map(string)
   default     = {}
   description = "A map of key value pairs for environment variables."

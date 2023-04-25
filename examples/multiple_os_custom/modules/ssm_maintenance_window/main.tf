@@ -14,12 +14,8 @@ resource "aws_ssm_maintenance_window_target" "this" {
   window_id     = aws_ssm_maintenance_window.this.id
   resource_type = "INSTANCE"
   targets {
-    key    = "tag:PatchDay"
-    values = [var.patch_day]
-  }
-  targets {
     key    = "tag:PatchWindow"
-    values = [var.patch_window]
+    values = ["${var.patch_day}_${var.patch_window}"]
   }
 }
 
