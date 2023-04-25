@@ -72,7 +72,7 @@ def lambda_handler(event, context):
         instance_ids = get_instance_ids(patch_group)
         logger.info(f'Instance IDs for {patch_group}: {instance_ids}')
         update_instance_tags(instance_ids, patch_group)
-        return "Completed IAM Checker"
+        return instance_ids
 
     except Exception as e:
         logger.error(e)
