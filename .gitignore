@@ -50,3 +50,5 @@ keys/
 .idea
 
 **/*.zip
+
+**/.external_modules
