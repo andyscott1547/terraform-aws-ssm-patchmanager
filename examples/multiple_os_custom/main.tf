@@ -75,13 +75,6 @@ module "lambda" {
   ] 
 }
 
-data "archive_file" "lambda" {
-  for_each    = var.lambda_functions
-  type        = "zip"
-  source_file = "./src/critical_patching/${each.key}.py"
-  output_path = "./src/critical_patching/${each.key}.zip"
-}
-
 resource "aws_s3_object" "object" {
   for_each = var.lambda_functions
   bucket = module.lambda_s3.bucket_name
@@ -92,7 +85,7 @@ resource "aws_s3_object" "object" {
 
 module "lambda_s3" {
   source      = "andyscott1547/compliant-s3-bucket/aws"
-  version     = "1.0.0"
+  version     = "1.1.0"
   bucket_name = "patchmanager-lambda"
 }
 
@@ -100,6 +93,12 @@ resource "aws_sfn_state_machine" "critical_patching" {
   name        = "critical-patching"
   role_arn    = aws_iam_role.critical_patching.arn
   definition  = data.template_file.step_function.rendered
+  # logging_configuration {
+  #   level = "ALL"
+  # }
+  tracing_configuration {
+    enabled = true
+  }
 }
 
 resource "aws_iam_role" "critical_patching" {
@@ -112,6 +111,11 @@ resource "aws_iam_role" "critical_patching" {
       "Name" = "step-function-role",
     },
   )
+}
+
+resource "aws_iam_role_policy_attachment" "critical_patching" {
+  role       = aws_iam_role.critical_patching.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
 }
 
 resource "aws_iam_role_policy" "critical_patching" {

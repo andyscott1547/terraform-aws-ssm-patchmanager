@@ -4,6 +4,13 @@ data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
 
+data "archive_file" "lambda" {
+  for_each    = var.lambda_functions
+  type        = "zip"
+  source_file = "./src/critical_patching/${each.key}.py"
+  output_path = "./src/critical_patching/${each.key}.zip"
+}
+
 data "aws_iam_policy_document" "lambda_critical_patching" {
   //checkov:skip=CKV_AWS_107
   //checkov:skip=CKV_AWS_110
@@ -12,11 +19,12 @@ data "aws_iam_policy_document" "lambda_critical_patching" {
     effect = "Allow"
 
     actions = [
-      "SSM:*"
+      "ssm:ListAssociations",
+      "ssm:StartAssociationsOnce",
     ]
 
     resources = [
-      "*"
+      "arn:aws:ssm:${data.aws_caller_identity.current.account_id}:${data.aws_region.current.name}:association/*"
     ]
   }
 
@@ -25,10 +33,12 @@ data "aws_iam_policy_document" "lambda_critical_patching" {
     effect = "Allow"
 
     actions = [
-      "EC2:*"
+      "ec2:DescribeInstances",
+      "ec2:DeleteTags",
+      "ec2:CreateTags"
     ]
 
-    resources = ["*"]
+    resources = ["arn:aws:ec2:${data.aws_caller_identity.current.account_id}:${data.aws_region.current.name}:instance/*"]
   }
 }
 
@@ -62,48 +72,40 @@ data "aws_iam_policy_document" "step_function_critical_patching" {
     effect = "Allow"
 
     actions = [
-      "ssm:*"
+      "ssm:DescribeAssociationExecutions",
     ]
 
     resources = [
-      "*"
+      "arn:aws:ssm:${data.aws_caller_identity.current.account_id}:${data.aws_region.current.name}:association/*"
     ]
   }
 
-  statement {
-    sid    = "CriticalPatchingEC2Allow"
-    effect = "Allow"
+  # statement {
+  #   sid    = "CriticalPatchingXRayAllow"
+  #   effect = "Allow"
 
-    actions = [
-      "ec2:*"
-    ]
+  #   actions = [
+  #     "xray:PutTraceSegments",
+  #     "xray:PutTelemetryRecords",
+  #     "xray:GetSamplingRules",
+  #     "xray:GetSamplingTargets"
+  #   ]
 
-    resources = ["*"]
-  }
-
-  statement {
-    sid    = "CriticalPatchingXRayAllow"
-    effect = "Allow"
-
-    actions = [
-      "xray:*"
-    ]
-
-    resources = [
-      "*"
-    ]
-  }
+  #   resources = [
+  #     "*"
+  #   ]
+  # }
 
   statement {
     sid    = "CriticalPatchingLambdaAllow"
     effect = "Allow"
 
     actions = [
-      "lambda:*"
+      "lambda:InvokeFunction"
     ]
 
     resources = [
-      "*"
+      "arn:aws:lambda:${data.aws_caller_identity.current.account_id}:${data.aws_region.current.name}:function:*"
     ]
   } 
 }
