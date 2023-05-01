@@ -1,0 +1,26 @@
+# Github actions YAML syntax see https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
+
+name: terraform
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3 # https://github.com/actions/checkout
+      - name: terraform init && terraform validate
+        run: |
+          for terraform_path in $(find . -type f -name 'main.tf' | xargs -I{} dirname {})
+          do
+            pushd . > /dev/null
+            cd $terraform_path
+            echo "Path: $(pwd)"
+            terraform init
+            terraform validate
+            popd > /dev/null
+          done
