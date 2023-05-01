@@ -1,0 +1,26 @@
+name: python
+on:
+  push:
+    branches:
+    - "*"
+  pull_request:
+    branches:
+    - "*"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3 # https://github.com/actions/checkout
+    - uses: actions/setup-python@v4 # https://github.com/actions/setup-python
+      with:
+        python-version: '3.x'
+    - name: install pytest
+      run: |
+        pip install -U pytest
+        python --version
+        pytest --version
+        echo "PYTHONPATH=$GITHUB_WORKSPACE:$PYTHONPATH" >> $GITHUB_ENV
+    - name: Run pytest
+      run: |
+        echo "PYTHONPATH=$PYTHONPATH"
+        pytest
