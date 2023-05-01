@@ -20,6 +20,9 @@ jobs:
         python --version
         pytest --version
         echo "PYTHONPATH=$GITHUB_WORKSPACE:$PYTHONPATH" >> $GITHUB_ENV
+    - name: install test dependencies
+      run: |
+        pip install -r examples/multiple_os_custom/src/critical_patching/tests/test-requirements.txt
     - name: Run pytest
       run: |
         echo "PYTHONPATH=$PYTHONPATH"
