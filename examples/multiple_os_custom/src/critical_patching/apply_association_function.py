@@ -6,8 +6,7 @@ import os
 import time
 # from aws_xray_sdk.core import patch_all, xray_recorder
 
-ec2_client = boto3.client('ec2')
-ssm_client = boto3.client('ssm')
+ssm_client = boto3.client('ssm', region_name=os.environ.get('AWS_DEFAULT_REGION', 'eu-west-2'))
 
 log_level = os.environ.get('LOGGING_LEVEL', logging.INFO)
 

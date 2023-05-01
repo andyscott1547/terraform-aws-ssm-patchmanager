@@ -1,1 +1,2 @@
 aws_xray_sdk
+boto3
