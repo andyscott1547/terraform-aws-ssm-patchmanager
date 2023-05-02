@@ -4,6 +4,7 @@ import boto3
 import logging
 import os
 # from aws_xray_sdk.core import patch_all, xray_recorder
+from critical_patching.ec2s import get_instance_ids_for_patch_group, update_instance_tags
 
 ec2_client = boto3.client('ec2', region_name=os.environ.get('AWS_DEFAULT_REGION', 'eu-west-2'))
 
@@ -13,65 +14,15 @@ logger = logging.getLogger(__name__)
 logger.setLevel(log_level)
 # patch_all()
 
-def get_instance_ids(patch_group):
-    '''Get the instance ID based on PatchGroup tags'''
-    instances = ec2_client.describe_instances(
-        Filters=[
-            {
-                'Name': 'tag:PatchGroup',
-                'Values': [
-                    patch_group,
-                ]
-            },
-        ]
-    )
-
-    instance_ids = []
-    
-    for reservation in instances['Reservations']:
-        for instance in reservation['Instances']:
-            instance_id = instance['InstanceId']
-            instance_ids.append(instance_id)
-
-    return instance_ids
-
-def update_instance_tags(instance_ids, patch_group):
-    '''Update the instance tags'''
-
-    for instance_id in instance_ids:
-        ec2_client.delete_tags(
-            Resources=[
-                instance_id,
-            ],
-            Tags=[
-                {
-                    'Key': 'PatchGroup',
-                    'Value': patch_group
-                },
-            ]
-        )
-
-        ec2_client.create_tags(
-            Resources=[
-                instance_id,
-            ],
-            Tags=[
-                {
-                    'Key': 'PatchGroup',
-                    'Value': f'CRITICAL_{patch_group}'
-                },
-            ]
-        )
-    return f'Completed updating tags for {patch_group}: {instance_ids}'
-
 # @xray_recorder.capture('critical_patching')
 def lambda_handler(event, context):
     '''Main function'''
     try:
         patch_group = event['patch_group']
-        instance_ids = get_instance_ids(patch_group)
+        instance_ids = get_instance_ids_for_patch_group(ec2_client, patch_group_tag_value=patch_group)
         logger.info(f'Instance IDs for {patch_group}: {instance_ids}')
-        update_instance_tags(instance_ids, patch_group)
+        updated_tag_value = f'CRITICAL_{patch_group}'
+        update_instance_tags(ec2_client, instance_ids, delete_patch_group_tag_value=patch_group, replace_with_value=updated_tag_value)
         return instance_ids
 
     except Exception as e:
